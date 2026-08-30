@@ -2,10 +2,10 @@
 
 ## Integrantes e papéis
 
-- **[Nome completo do integrante 1]** — **[Papel: frontend, backend ou fullstack]**
-- **[Nome completo do integrante 2]** — **[Papel: frontend, backend ou fullstack]**
-
-> Substitua os campos indicados acima pelos nomes completos e papéis dos integrantes da equipe.
+- **Ana Julia Pinheiro Macedo** — Backend
+- **Alexandre da Cunha Cenachi** — Fullstack
+- **Felipe Pires de Oliveira** — Frontend
+- **Leonardo Murilho de Aquino Pereira** — Frontend
 
 ## Objetivo
 

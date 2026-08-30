@@ -1,4 +1,4 @@
-# CRM para Pequenas Equipes Comerciais
+# NexoCRM - CRM para Pequenas Equipes Comerciais
 
 ## Integrantes e papéis
 

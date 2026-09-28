@@ -63,3 +63,82 @@ No celular, o funil tem rolagem horizontal para preservar a leitura dos cartões
 8. `services/demo.js` e `fixtures.js`: simulação com contatos fictícios.
 9. `services/api.js`: único adaptador HTTP, para ajustar com Alexandre e Ana.
 10. `styles.css` e `components.css`: estilos e adaptação a telas menores.
+
+## Integrar com o backend
+
+Copie `frontend/.env.example` para `frontend/.env`, configure e reinicie o Vite:
+
+```ini
+VITE_DATA_SOURCE=api
+VITE_API_URL=http://127.0.0.1:8000
+```
+
+O modo API nunca retorna dados fictícios quando o servidor falha. Os endpoints
+abaixo são uma **proposta do frontend**, não endpoints já confirmados no backend:
+
+| Método e caminho | Resposta esperada |
+| --- | --- |
+| GET /clients | Lista JSON de clientes |
+| GET /opportunities | Lista JSON de oportunidades |
+| GET /interactions | Lista JSON de interações |
+| POST /opportunities | Objeto completo da oportunidade criada, incluindo id |
+| PATCH /opportunities/{id} | Objeto completo atualizado; corpo enviado: `{"stage":"won"}` |
+
+Formato dos registros (listas sem envelope/paginação nesta proposta):
+
+```json
+{
+  "client": { "id": 1, "name": "Marina Costa", "company": "Aurora Studio", "type": "client", "email": "marina@example.com", "phone": "(31) 99999-0101" },
+  "opportunity": { "id": "abc", "client_id": 1, "title": "Consultoria", "value": 1250.5, "stage": "new", "expected_close_date": null, "notes": "", "created_at": "2026-09-26T12:00:00Z" },
+  "interaction": { "id": 1, "client_id": 1, "type": "call", "description": "Primeiro contato.", "occurred_at": "2026-09-25T12:00:00Z" }
+}
+```
+
+POST envia os campos da oportunidade exceto `id` e `created_at`, gerados pelo
+servidor. `value` deve ser um número JSON. Datas de fechamento usam `YYYY-MM-DD`
+ou `null`. Data/hora das interações usa ISO 8601 com fuso. Tipos de interação:
+`call`, `meeting`, `email` ou `other`; clientes: `client` ou `lead`.
+
+O backend deve validar os dados novamente, conferir a existência do cliente e
+persistir as mudanças. Habilitar CORS para a origem local efetiva do frontend.
+Se o backend usar nomes em português, valores decimais como string, paginação,
+ou consultas por cliente, adaptar `services/api.js` para fornecer o formato
+interno acima. Não espalhar diferenças do contrato pelas telas.
+
+Para integrar o frontend do Felipe, manter uma única aplicação React e incorporar
+as rotas/componentes das US01–US04. O acesso à US08 é `#/clientes/{id}`. O funil
+é `#/funil`. Esse roteamento simples pode ser adaptado à base comum da equipe.
+
+## Roteiro de revisão humana
+
+1. Criar oportunidade para Marina com valor 1.250,50; conferir cartão e total.
+2. Mover para Ganho; conferir mudança de coluna e valor conquistado.
+3. Recarregar; confirmar persistência no modo demonstração.
+4. Abrir Marina pelo seletor; conferir vínculo e histórico de interações.
+5. Tentar enviar formulário vazio e com valor negativo; conferir bloqueio.
+6. Cancelar ou pressionar Escape; confirmar que não cria oportunidade.
+7. Buscar texto inexistente; verificar mensagem e limpar a busca.
+8. Revisar a interface no celular e navegar no formulário pelo teclado.
+9. Repetir criação, mudança de etapa e recarga com o backend real antes da entrega.
+
+## Recuperação dos dados de demonstração
+
+Os clientes/interações são fixos e fictícios. Oportunidades ficam no
+`localStorage`, chave `nexocrm.demo.opportunities.v1`, por origem/navegador.
+Não são compartilhadas com o grupo nem armazenadas em SQLite. Não inserir
+dados reais nessa demonstração. Ao detectar dados corrompidos, a tela mostra
+erro e preserva o conteúdo salvo.
+
+Para recomeçar a demonstração, após guardar qualquer informação que queira
+manter, remova **somente essa chave** no painel de armazenamento das ferramentas
+do navegador e recarregue. Isso descarta as oportunidades de demonstração
+criadas nesse navegador e recupera os exemplos iniciais.
+
+## Commits e revisão
+
+Não fazer um único commit com toda esta versão. Revisar o código com Leonardo e
+separar mudanças funcionais de até 100 linhas com Conventional Commits, usando
+seleção de trechos quando necessário. O pnpm-lock.yaml local não deve ser
+incluído nos commits. Não comprimir o código para contornar o limite.
+Só atribuir autoria/revisão que realmente ocorreu.
+Os commits da equipe devem respeitar a participação mínima de 15% por membro.

@@ -27,6 +27,11 @@ export function createApiService(baseUrl) {
       }
       return { clients, opportunities, interactions };
     },
+    createClient: (draft) => request('/clients', { method: 'POST', body: JSON.stringify(draft) }),
+    updateClient: (id, draft) => request(`/clients/${encodeURIComponent(id)}`, {
+      method: 'PUT', body: JSON.stringify(draft),
+    }),
+    createInteraction: (draft) => request('/interactions', { method: 'POST', body: JSON.stringify(draft) }),
     createOpportunity: (draft) => request('/opportunities', { method: 'POST', body: JSON.stringify(draft) }),
     changeStage: (id, stage) => request(`/opportunities/${encodeURIComponent(id)}`, {
       method: 'PATCH', body: JSON.stringify({ stage }),

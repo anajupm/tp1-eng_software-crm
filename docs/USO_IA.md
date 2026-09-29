@@ -31,3 +31,13 @@
 O código novo desta sessão foi produzido pela IA. Não confundir execução de
 testes com revisão/aprovação humana, nem usar esta sessão para estimar a
 porcentagem de todo o sistema antes das contribuições dos demais integrantes.
+
+## Sessão de 29/09/2026 — frontend das US01–US04
+
+- Integrante responsável: Felipe Pires de Oliveira.
+- Ferramenta: Antigravity.
+- Contexto fornecido: repositório do projeto, frontend de US05–US08 desenvolvido por Leonardo, branches de backend e requisitos das histórias US01 a US04.
+- Objetivo: implementar o frontend completo das histórias de usuário 1 a 4 (cadastro, listagem, pesquisa, edição de clientes e registro de interações), respeitando Conventional Commits e commits atômicos de no máximo 100 LOC.
+- Produção da IA: regras de domínio de clientes e interações, componentes de listagem/pesquisa (`ClientList`), formulário de cliente (`ClientForm`), formulário de interação (`InteractionForm`), extensão do adaptador HTTP e do armazenamento de demonstração, novos testes automatizados e documentação.
+- Verificações técnicas: 20 testes unitários automatizados cobrindo domínio, persistência e contratos de API (100% de sucesso); build de produção do Vite bem-sucedido.
+

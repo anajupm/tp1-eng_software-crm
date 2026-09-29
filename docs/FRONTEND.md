@@ -30,6 +30,10 @@ das faixas do package.json. O pnpm autoriza somente o build do esbuild.
 
 | História | Critérios implementados |
 | --- | --- |
+| US01 | Cadastrar cliente ou lead com nome, tipo, e-mail único, telefone e empresa opcionais; validação e feedback. |
+| US02 | Visualizar e pesquisar clientes/leads em `#/clientes`; busca textual e filtros de tipo; métricas resumidas. |
+| US03 | Atualizar dados cadastrais via modal na listagem ou na visão consolidada; validação e preservação de dados. |
+| US04 | Registrar contato (ligação, reunião, e-mail ou outro) com data/hora e anotações; atualização do histórico. |
 | US05 | Selecionar cliente existente; informar título e valor; criar oportunidade; visualizar cartão e confirmação; indicar erros sem perder o formulário. |
 | US06 | Alterar etapa no cartão; atualizar coluna e totais após sucesso; manter a etapa anterior se a gravação falhar; impedir mudanças simultâneas no mesmo cartão. |
 | US07 | Exibir colunas, quantidades e valores por etapa; filtrar abertas/encerradas e buscar por título, cliente ou empresa; indicar resultado vazio. |
@@ -79,10 +83,13 @@ abaixo são uma **proposta do frontend**, não endpoints já confirmados no back
 | Método e caminho | Resposta esperada |
 | --- | --- |
 | GET /clients | Lista JSON de clientes |
+| POST /clients | Objeto completo do cliente cadastrado, incluindo id |
+| PUT /clients/{id} | Objeto completo do cliente atualizado |
 | GET /opportunities | Lista JSON de oportunidades |
-| GET /interactions | Lista JSON de interações |
 | POST /opportunities | Objeto completo da oportunidade criada, incluindo id |
 | PATCH /opportunities/{id} | Objeto completo atualizado; corpo enviado: `{"stage":"won"}` |
+| GET /interactions | Lista JSON de interações |
+| POST /interactions | Objeto completo da interação registrada, incluindo id |
 
 Formato dos registros (listas sem envelope/paginação nesta proposta):
 

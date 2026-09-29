@@ -70,3 +70,29 @@ form textarea { resize: vertical; } form [aria-invalid=true] { border-color: #b8
   .form-grid { grid-template-columns: 1fr; gap: 0; } .dialog-footer { flex-wrap: wrap; } .dialog-footer > span { width: 100%; margin-bottom: 5px; }
   .dialog-footer .button { flex: 1; } .timeline-panel { padding: 20px; }
 }
+.client-list-toolbar { display: flex; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+.filter-chip { background: #f3f6f3; border: 1px solid #dbe4dc; border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 500; color: #5a6e5d; cursor: pointer; transition: all .15s ease; }
+.filter-chip:hover { background: #e8eee8; }
+.filter-chip.active { background: #2d5a37; border-color: #2d5a37; color: #fff; }
+.client-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 18px; margin-bottom: 30px; }
+.client-card { background: #fff; border: 1px solid #e2e9e2; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+.client-card:hover { border-color: #b8ccb8; }
+.client-card-top { display: flex; gap: 14px; align-items: flex-start; }
+.client-card-avatar { width: 44px; height: 44px; border-radius: 10px; background: #eaf1eb; color: #2d5a37; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.client-card-info { flex: 1; min-width: 0; }
+.client-card-info h2 { font-size: 16px; margin: 4px 0 2px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.client-card-info h2 a { color: #1e2d20; text-decoration: none; }
+.client-card-info h2 a:hover { color: #2d5a37; text-decoration: underline; }
+.client-card-company { font-size: 12px; color: #6e8071; display: flex; align-items: center; gap: 5px; margin: 0; }
+.client-type-tag { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; padding: 2px 7px; border-radius: 4px; }
+.client-type-tag.lead { background: #fef3c7; color: #92400e; }
+.client-type-tag.client { background: #dcfce7; color: #166534; }
+.client-card-contacts { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #526355; }
+.client-card-contacts span { display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.client-card-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px 0; border-top: 1px solid #edf2ed; border-bottom: 1px solid #edf2ed; font-size: 11px; }
+.client-card-metrics span { display: block; color: #7b8b7e; font-size: 10px; }
+.client-card-metrics strong { display: block; font-size: 13px; font-weight: 600; color: #1e2d20; margin-top: 2px; }
+.client-card-actions { display: flex; gap: 8px; align-items: center; justify-content: flex-end; margin-top: auto; }
+.button.small { padding: 6px 11px; font-size: 12px; border-radius: 6px; gap: 4px; }
+.client-profile-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+

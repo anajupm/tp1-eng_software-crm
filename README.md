@@ -9,54 +9,51 @@
 
 ## Objetivo
 
-O sistema tem como objetivo apoiar pequenas equipes comerciais no gerenciamento de clientes, leads e oportunidades de venda.
-A aplicação permitirá centralizar informações de contato e acompanhar o histórico de interações.
-Também será possível visualizar o andamento das negociações em um funil comercial.
-Dessa forma, a equipe poderá organizar melhor seus contatos e acompanhar oportunidades abertas.
-Além disso, poderá consultar rapidamente o histórico de relacionamento com cada cliente.
+O NexoCRM é um sistema desenvolvido para apoiar pequenas equipes comerciais no gerenciamento de clientes, leads e oportunidades de venda.
+
+A aplicação permite centralizar informações de contato, registrar o histórico de interações com clientes, criar e acompanhar oportunidades comerciais e visualizar o andamento das negociações em um funil de vendas.
+
+Além disso, o sistema disponibiliza uma visão consolidada de cada cliente, reunindo seus dados cadastrais, interações realizadas e oportunidades associadas.
+
+## Funcionalidades
+
+O sistema implementa as seguintes histórias de usuário:
+
+- **US01:** cadastrar clientes e leads com suas informações de contato.
+- **US02:** visualizar e pesquisar clientes cadastrados.
+- **US03:** atualizar os dados de um cliente.
+- **US04:** registrar ligações, reuniões e outros contatos realizados com um cliente.
+- **US05:** criar uma oportunidade de venda associada a um cliente.
+- **US06:** alterar a etapa de uma oportunidade.
+- **US07:** visualizar oportunidades organizadas por etapa em um pipeline comercial.
+- **US08:** acessar uma visão consolidada do cliente, incluindo dados, interações e oportunidades.
 
 ## Tecnologias
 
-- **Frontend:** React
+- **Frontend:** React + Vite
 - **Backend:** FastAPI
 - **Linguagens:** JavaScript e Python
 - **Banco de dados:** SQLite
 - **ORM:** SQLAlchemy
+- **Validação de dados:** Pydantic
 - **Versionamento:** Git e GitHub
 - **Agente de IA:** OpenAI Codex
 
-## Histórias de usuário
+## Arquitetura
 
-- **US01:** Como vendedor, quero cadastrar um cliente ou lead para armazenar suas informações de contato no sistema.
-- **US02:** Como vendedor, quero visualizar e pesquisar clientes cadastrados para encontrar rapidamente suas informações.
-- **US03:** Como vendedor, quero atualizar os dados de um cliente para manter suas informações corretas.
-- **US04:** Como vendedor, quero registrar ligações, reuniões ou contatos realizados com um cliente para manter seu histórico de relacionamento.
-- **US05:** Como vendedor, quero criar uma oportunidade de venda associada a um cliente para acompanhar uma possível negociação.
-- **US06:** Como vendedor, quero alterar a etapa de uma oportunidade para representar o andamento da negociação.
-- **US07:** Como vendedor, quero visualizar as oportunidades organizadas por etapa para acompanhar o pipeline comercial.
-- **US08:** Como vendedor, quero acessar uma página com dados, interações e oportunidades de um cliente para ter uma visão consolidada do relacionamento.
-
-## Frontend das US05–US08
-
-Implementação inicial em `frontend/`, com React e Vite. Inclui criação de
-oportunidades, mudança de etapa, funil comercial e visão consolidada do cliente.
-Por padrão, utiliza dados fictícios e salva as oportunidades no navegador.
-O backend real e a integração com as US01–US04 ainda estão pendentes.
-
-```sh
-cd frontend
-pnpm install --no-frozen-lockfile
-pnpm dev
+```text
+React
+  ↓
+API REST
+  ↓
+FastAPI
+  ↓
+SQLAlchemy
+  ↓
+SQLite
 ```
 
-O lockfile não é versionado; a instalação gera uma cópia local ignorada pelo Git.
-As versões instaladas podem variar dentro das faixas declaradas no package.json.
-
-Requer Node.js 22.12+ e pnpm 11. Guia de execução, contrato proposto da API,
-critérios de aceitação e roteiro de revisão: [docs/FRONTEND.md](docs/FRONTEND.md).
-Registro inicial do uso de IA: [docs/USO_IA.md](docs/USO_IA.md).
-
-## Documentação UML preliminar
+## Documentação UML
 
 Os diagramas abaixo representam o modelo usado pelo frontend e o contrato
 proposto. Precisam de revisão da equipe e alinhamento com o backend real.

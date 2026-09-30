@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+*.log
+/frontend/pnpm-lock.yaml
+package-lock.json
+/frontend/package-lock.json

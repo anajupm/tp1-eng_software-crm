@@ -88,3 +88,54 @@ def update_contact(
     db.commit()
     db.refresh(contact)
     return contact
+
+
+@router.post(
+    "/{contact_id}/interactions",
+    response_model=schemas.InteractionResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_interaction(
+    contact_id: int,
+    interaction: schemas.InteractionCreate,
+    db: Session = Depends(get_db),
+):
+    contact = (
+        db.query(models.Contact).filter(models.Contact.id == contact_id).first()
+    )
+    if not contact:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Contact not found",
+        )
+
+    db_interaction = models.Interaction(
+        contact_id=contact_id,
+        **interaction.model_dump(),
+    )
+    db.add(db_interaction)
+    db.commit()
+    db.refresh(db_interaction)
+    return db_interaction
+
+
+@router.get(
+    "/{contact_id}/interactions",
+    response_model=list[schemas.InteractionResponse],
+)
+def list_interactions(contact_id: int, db: Session = Depends(get_db)):
+    contact = (
+        db.query(models.Contact).filter(models.Contact.id == contact_id).first()
+    )
+    if not contact:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Contact not found",
+        )
+
+    return (
+        db.query(models.Interaction)
+        .filter(models.Interaction.contact_id == contact_id)
+        .order_by(models.Interaction.occurred_at.desc())
+        .all()
+    )

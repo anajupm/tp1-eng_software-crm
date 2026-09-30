@@ -55,23 +55,23 @@ SQLite
 
 ## Documentação UML
 
-Os diagramas abaixo representam o modelo usado pelo frontend e o contrato
-proposto. Precisam de revisão da equipe e alinhamento com o backend real.
+Os diagramas abaixo representam a estrutura final implementada no sistema e o fluxo de comunicação entre frontend, API e banco de dados.
 
 ### Diagrama de classes
 
 ```mermaid
 classDiagram
-    class Cliente {
+    class Contact {
         int id
         string name
-        string company
-        string type
         string email
         string phone
+        string company
+        string type
     }
-    class Oportunidade {
-        string id
+
+    class Opportunity {
+        int id
         int client_id
         string title
         decimal value
@@ -80,16 +80,20 @@ classDiagram
         string notes
         datetime created_at
     }
-    class Interacao {
+
+    class Interaction {
         int id
-        int client_id
+        int contact_id
         string type
         string description
         datetime occurred_at
     }
-    Cliente "1" --> "0..*" Oportunidade : possui
-    Cliente "1" --> "0..*" Interacao : possui
+
+    Contact "1" --> "0..*" Opportunity : possui
+    Contact "1" --> "0..*" Interaction : possui
 ```
+
+No backend, `Opportunity.client_id` referencia `Contact.id`, enquanto `Interaction.contact_id` também referencia `Contact.id`. No frontend, o serviço de API adapta `contact_id` para `client_id` ao carregar interações, mantendo o contrato esperado pelos componentes React.
 
 ### Diagrama de sequência: criação de oportunidade
 
@@ -97,24 +101,26 @@ classDiagram
 sequenceDiagram
     actor Vendedor
     participant Form as Formulario React
-    participant Service as Servico CRM
-    participant API as FastAPI (proposto)
-    participant DB as Banco de dados (proposto)
+    participant Service as Servico de API
+    participant API as FastAPI
+    participant ORM as SQLAlchemy
+    participant DB as SQLite
+
     Vendedor->>Form: Preenche oportunidade e seleciona cliente
-    Form->>Form: Valida campos
+    Form->>Form: Valida os campos
+
     alt Campos validos
         Form->>Service: createOpportunity(dados)
-        alt Modo demonstracao
-            Service->>Service: Salva no localStorage
-        else Modo API (integracao pendente)
-            Service->>API: POST /opportunities
-            API->>DB: Valida e persiste
-            DB-->>API: Registro criado
-            API-->>Service: Oportunidade com id
-        end
-        Service-->>Form: Oportunidade criada ou erro
-        Form-->>Vendedor: Atualiza funil ou exibe erro
+        Service->>API: POST /opportunities
+        API->>API: Valida dados com Pydantic
+        API->>ORM: Cria objeto Opportunity
+        ORM->>DB: INSERT opportunity
+        DB-->>ORM: Registro persistido
+        ORM-->>API: Opportunity criada
+        API-->>Service: Oportunidade criada
+        Service-->>Form: Retorna oportunidade
+        Form-->>Vendedor: Atualiza o funil de vendas
     else Campos invalidos
-        Form-->>Vendedor: Indica campos a corrigir
+        Form-->>Vendedor: Exibe mensagem de validacao
     end
 ```

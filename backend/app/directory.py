@@ -28,7 +28,7 @@ def read_client_summary(client_id: int, db: Session = Depends(get_db)):
         .order_by(Opportunity.created_at.desc()).all()
     )
     interactions = (
-        db.query(Interaction).filter_by(client_id=client_id)
+        db.query(Interaction).filter_by(contact_id=client_id)
         .order_by(Interaction.occurred_at.desc()).all()
     )
     return {"client": client, "opportunities": opportunities, "interactions": interactions}

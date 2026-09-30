@@ -51,3 +51,40 @@ def get_contact(contact_id: int, db: Session = Depends(get_db)):
             detail="Contact not found",
         )
     return contact
+
+
+@router.patch("/{contact_id}", response_model=schemas.ContactResponse)
+def update_contact(
+    contact_id: int,
+    contact_update: schemas.ContactUpdate,
+    db: Session = Depends(get_db),
+):
+    contact = (
+        db.query(models.Contact).filter(models.Contact.id == contact_id).first()
+    )
+    if not contact:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Contact not found",
+        )
+
+    update_data = contact_update.model_dump(exclude_unset=True)
+    new_email = update_data.get("email")
+    if new_email and new_email != contact.email:
+        existing_contact = (
+            db.query(models.Contact)
+            .filter(models.Contact.email == new_email, models.Contact.id != contact_id)
+            .first()
+        )
+        if existing_contact:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Email already registered",
+            )
+
+    for field, value in update_data.items():
+        setattr(contact, field, value)
+
+    db.commit()
+    db.refresh(contact)
+    return contact

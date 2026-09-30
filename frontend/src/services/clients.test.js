@@ -53,11 +53,11 @@ test('adaptador HTTP encaminha operações de cliente e interação', async () =
     await api.updateClient(42, { name: 'Teste PUT', email: 'api@crm.com', type: 'client' });
     await api.createInteraction({ client_id: 42, type: 'email', description: 'Email enviado' });
 
-    assert.equal(calls[0].url, 'http://test.api/clients');
+    assert.equal(calls[0].url, 'http://test.api/contacts');
     assert.equal(calls[0].method, 'POST');
-    assert.equal(calls[1].url, 'http://test.api/clients/42');
-    assert.equal(calls[1].method, 'PUT');
-    assert.equal(calls[2].url, 'http://test.api/interactions');
+    assert.equal(calls[1].url, 'http://test.api/contacts/42');
+    assert.equal(calls[1].method, 'PATCH');
+    assert.equal(calls[2].url, 'http://test.api/contacts/42/interactions');
     assert.equal(calls[2].method, 'POST');
   } finally {
     globalThis.fetch = originalFetch;

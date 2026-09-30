@@ -7,3 +7,7 @@ dist/
 /frontend/pnpm-lock.yaml
 package-lock.json
 /frontend/package-lock.json
+backend/.venv/
+backend/nexocrm.db
+__pycache__/
+*.pyc

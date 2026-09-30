@@ -12,7 +12,9 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
+
 def get_db():
+    """Provide one SQLAlchemy session per request and always close it."""
     db = SessionLocal()
     try:
         yield db

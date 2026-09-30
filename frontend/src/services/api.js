@@ -46,11 +46,14 @@ export function createApiService(baseUrl) {
 
   return {
     async load() {
-      const clients = await request('/contacts');
+      const [clients, opportunities] = await Promise.all([
+        request('/contacts'),
+        request('/opportunities'),
+      ]);
 
-      if (!Array.isArray(clients)) {
+      if (!Array.isArray(clients) || !Array.isArray(opportunities)) {
         throw new Error(
-          'Resposta inesperada do servidor: a consulta de contatos deve retornar uma lista.'
+          'Resposta inesperada do servidor: contatos e oportunidades devem retornar listas.'
         );
       }
 
@@ -67,7 +70,7 @@ export function createApiService(baseUrl) {
       return {
         clients,
         interactions,
-        opportunities: [],
+        opportunities,
       };
     },
 

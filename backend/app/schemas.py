@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-
+from datetime import datetime
 
 class ContactBase(BaseModel):
     name: str
@@ -23,5 +23,22 @@ class ContactUpdate(BaseModel):
 
 class ContactResponse(ContactBase):
     id: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class InteractionBase(BaseModel):
+    type: str
+    description: str
+    occurred_at: datetime
+
+
+class InteractionCreate(InteractionBase):
+    pass
+
+
+class InteractionResponse(InteractionBase):
+    id: int
+    contact_id: int
 
     model_config = ConfigDict(from_attributes=True)

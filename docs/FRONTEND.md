@@ -22,6 +22,14 @@ Abra o endereço informado no terminal (normalmente http://127.0.0.1:5173).
 `pnpm build` gera `frontend/dist`; `pnpm preview` serve essa compilação.
 `pnpm test` executa as verificações pequenas de validação, armazenamento e
 adaptador. Elas auxiliam a implementação, mas não contam na avaliação do TP1.
+Para executar o teste E2E com navegador, instale também as dependências do
+backend (`pip install -r ../backend/requirements.txt` a partir de `frontend`), rode
+`pnpm exec playwright install chromium` e, em `frontend`, execute
+`pnpm test:e2e`. Se o Python com as dependências não for o `python3` do PATH,
+defina `PYTHON` com o caminho do executável. O teste inicia a API e o Vite na
+porta 5173, usa um SQLite temporário e remove esse banco ao terminar.
+Em Linux, o Chromium também precisa das bibliotecas de sistema indicadas por
+`pnpm exec playwright install-deps chromium`.
 O lockfile não é versionado. A instalação gera um pnpm-lock.yaml local,
 ignorado pelo Git; instalações novas podem resolver versões diferentes dentro
 das faixas do package.json. O pnpm autoriza somente o build do esbuild.

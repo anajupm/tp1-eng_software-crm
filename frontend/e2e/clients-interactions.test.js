@@ -178,3 +178,77 @@ test('cadastra lead, pesquisa/filtra, edita para cliente, registra interação e
     await rm(databaseDir, { recursive: true, force: true });
   }
 });
+
+test('exibe erro ao cadastrar e-mail já existente na API', { timeout: 90000 }, async () => {
+  const databaseDir = await mkdtemp(join(tmpdir(), 'nexocrm-e2e-duplicate-'));
+  let api;
+  let frontend;
+  let browser;
+
+  try {
+    const apiPort = await freePort();
+    const apiUrl = `http://127.0.0.1:${apiPort}`;
+    const frontendUrl = 'http://127.0.0.1:5173';
+
+    api = start(
+      pythonCmd,
+      ['-m', 'uvicorn', 'backend.app.main:app', '--host', '127.0.0.1', '--port', String(apiPort)],
+      { cwd: databaseDir, env: { ...process.env, PYTHONPATH: repositoryDir } }
+    );
+    frontend = start(
+      process.execPath,
+      ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1', '--port', '5173', '--strictPort'],
+      { cwd: frontendDir, env: { ...process.env, VITE_DATA_SOURCE: 'api', VITE_API_URL: apiUrl } }
+    );
+    await Promise.all([
+      waitForServer(`${apiUrl}/openapi.json`, api),
+      waitForServer(frontendUrl, frontend),
+    ]);
+
+    try {
+      browser = await chromium.launch();
+    } catch {
+      browser = await chromium.launch({ channel: 'chrome' });
+    }
+    const page = await browser.newPage();
+    await page.goto(`${frontendUrl}/#/clientes`);
+    await page.getByText('Nenhum cliente cadastrado').waitFor();
+
+    const saved = await fetch(`${apiUrl}/contacts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'Contato original',
+        email: 'duplicado@exemplo.com',
+        type: 'lead',
+      }),
+    });
+    assert.equal(saved.status, 201);
+
+    await page.getByRole('button', { name: 'Novo cliente' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Novo cliente ou lead' });
+    await dialog.getByLabel('Nome completo').fill('Segundo contato');
+    await dialog.getByLabel('E-mail corporativo').fill('duplicado@exemplo.com');
+
+    const rejected = page.waitForResponse(
+      (response) => response.url() === `${apiUrl}/contacts`
+        && response.request().method() === 'POST'
+    );
+    await dialog.getByRole('button', { name: 'Cadastrar cliente' }).click();
+    assert.equal((await rejected).status(), 409);
+    await dialog.getByRole('alert').waitFor();
+    assert.match(await dialog.getByRole('alert').textContent(), /Já existe um cliente cadastrado/);
+
+    const contacts = await (await fetch(`${apiUrl}/contacts`)).json();
+    assert.equal(contacts.length, 1);
+    assert.equal(contacts[0].name, 'Contato original');
+
+    await page.reload();
+    await page.locator('.client-card').filter({ hasText: 'Contato original' }).waitFor();
+    assert.equal(await page.locator('.client-card').count(), 1);
+  } finally {
+    await browser?.close();
+    await Promise.all([stop(frontend), stop(api)]);
+    await rm(databaseDir, { recursive: true, force: true });
+  }
+});

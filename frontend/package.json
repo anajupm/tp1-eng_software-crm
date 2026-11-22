@@ -13,7 +13,7 @@
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --test src/domain/*.test.js src/services/*.test.js src/components/*.test.js",
     "test:coverage": "node --test --experimental-test-coverage src/domain/*.test.js src/services/*.test.js src/components/*.test.js",
-    "test:e2e": "node --test e2e/*.test.js"
+    "test:e2e": "node --test --test-concurrency=1 e2e/*.test.js"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

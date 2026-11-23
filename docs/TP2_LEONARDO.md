@@ -20,67 +20,140 @@ os totais, filtros, busca, persistência e isolamento das oportunidades e
 interações na visão de cada cliente, antes e depois de recarregar.
 O estado final também é consultado diretamente pela API.
 
-## Instalação e execução (PowerShell, a partir da raiz)
+## Preparação do computador (antes da aula)
 
-Requer Node compatível com `frontend/package.json`, pnpm e Python 3.
-Se Python não estiver no PATH, substitua `python` pelo caminho do executável.
+Use a versão integrada do repositório. Instale Node compatível com
+`frontend/package.json` (>=22.12.0), pnpm 11.25.0 e Python 3 com acesso pelo PATH.
+Verifique `node --version`, `pnpm --version` e `python --version`.
+Se algum comando não for reconhecido, confira a instalação e reabra o terminal;
+não copie caminhos de executáveis específicos de outro computador.
+
+PowerShell, a partir da raiz do projeto:
 
 ```powershell
 python -m venv backend/.venv
 & ./backend/.venv/Scripts/python.exe -m pip install -r backend/requirements.txt
-$env:PYTHON = (Resolve-Path ./backend/.venv/Scripts/python.exe).Path
 Set-Location frontend
 pnpm install --no-frozen-lockfile
 pnpm exec playwright install chromium
-pnpm test
-pnpm run test:coverage
-pnpm run test:e2e
-pnpm build
+Set-Location ..
 ```
 
-Para executar somente a contribuição de Leonardo, a partir de `frontend`:
+No Prompt de Comando (CMD), a partir da raiz:
+
+```bat
+python -m venv backend\.venv
+backend\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
+cd frontend
+pnpm install --no-frozen-lockfile
+pnpm exec playwright install chromium
+cd ..
+```
+
+Faça os downloads e um ensaio antes da aula. A porta 5173 precisa estar livre;
+não inicie o servidor de desenvolvimento manualmente para executar os E2E.
+
+## Apresentação: executar todos os testes
+
+Escolha apenas o bloco correspondente ao seu terminal. Comece na raiz do projeto.
+O comando de cobertura do frontend já executa sua suíte de unidade/integração;
+não é necessário repetir `pnpm test` durante a apresentação.
+
+### PowerShell
 
 ```powershell
+$env:PYTHON = (Resolve-Path ./backend/.venv/Scripts/python.exe).Path
+$env:COVERAGE_FILE = Join-Path $env:TEMP 'nexocrm-tp2-coverage'
+Set-Location backend
+& $env:PYTHON -m pytest --cov=app --cov-report=term-missing -q
+Set-Location ../frontend
+pnpm run test:coverage
+pnpm run test:e2e
+```
+
+### Prompt de Comando (CMD)
+
+```bat
+set "PYTHON=%CD%\backend\.venv\Scripts\python.exe"
+set "COVERAGE_FILE=%TEMP%\nexocrm-tp2-coverage"
+cd backend
+"%PYTHON%" -m pytest --cov=app --cov-report=term-missing -q
+cd ..\frontend
+pnpm run test:coverage
+pnpm run test:e2e
+```
+
+A variável `PYTHON` deve ser configurada novamente ao abrir outro terminal.
+`COVERAGE_FILE` mantém o arquivo de medição Python fora do repositório.
+Se algum comando falhar, examine a mensagem antes de seguir para o próximo.
+Como verificação adicional, execute `pnpm build` na pasta `frontend`.
+
+No Linux/macOS, crie a venv com `python3`, use seu executável
+`backend/.venv/bin/python` e exporte seu caminho absoluto em `PYTHON`.
+O Chromium pode requerer `pnpm exec playwright install-deps chromium` no Linux.
+
+## Executar somente os testes de Leonardo
+
+Na pasta `frontend`, após configurar `PYTHON` conforme acima:
+
+```text
 node --test src/components/OpportunityForm.test.js src/components/OpportunityCard.test.js
 node --test e2e/opportunities-isolation.test.js
 ```
 
-No Linux/macOS, use o Python de `backend/.venv/bin/python` na variável `PYTHON`.
-O Chromium pode requerer `pnpm exec playwright install-deps chromium` no Linux.
+O primeiro comando deve apresentar `tests 2`, `pass 2` e `fail 0`.
+O segundo deve apresentar `tests 1`, `pass 1` e `fail 0`.
+Os tempos variam conforme o computador.
 
-Não é necessário iniciar servidores manualmente. A porta 5173 deve estar livre;
-os testes não encerram servidores de outras sessões. A API usa porta dinâmica.
-O script E2E executa arquivos sequencialmente para evitar disputa pela porta 5173.
-O banco do novo cenário fica em diretório temporário exclusivo, removido ao terminar,
-e não usa `backend/nexocrm.db`. Não são necessárias credenciais nem arquivo `.env`.
+Os componentes rodam em um DOM simulado. Os E2E usam Chromium sem janela
+visível; o resultado é mostrado no terminal. Os testes iniciam seus próprios
+servidores, usam bancos temporários e encerram os recursos ao terminar.
+O novo cenário de Leonardo não usa o banco normal `backend/nexocrm.db`.
+Não são necessárias credenciais nem configuração manual de `.env` para esse cenário.
 
-## Cobertura e limites
+## Resultado integrado verificado em 23/11/2026
 
-O comando existente usa a cobertura nativa do Node. Os componentes JSX carregados
-pelo Vite não aparecem nesse relatório, embora os testes os exercitem.
-O helper de testes foi excluído explicitamente para não inflar a porcentagem.
-O relatório também não mede o Python nem inclui todos os arquivos não carregados.
-Portanto, seu percentual não comprova sozinho 80% de cobertura do sistema.
-O E2E verifica cenários adicionais, mas não entra na medição desse comando.
+Versão de código testada: `4c50825` da main, incluindo os PRs de Felipe,
+Alexandre, Ana Júlia e Leonardo. A verificação usou Node 24.22.3 e Python 3.12.14.
 
-Esses três casos complementam o trabalho do grupo, sem equivaler a quatro E2E.
-A versão final integrada deve ser reexecutada após reunir as contribuições.
+| Execução | Resultado |
+| --- | --- |
+| Unidade/integração pelo comando do frontend | 28 passaram, 0 falhas |
+| Testes Python do backend | 5 passaram |
+| E2E do grupo | 4 passaram, 0 falhas |
+| Build do frontend | Passou |
 
-## Preparação para a apresentação
+Os quatro casos E2E verificam:
 
-Antes da apresentação, Leonardo deve revisar e conseguir explicar a preparação
-dos dados, as ações, as asserções e a limpeza de recursos de cada caso.
-Pontos para discussão: uso de seletores acessíveis, isolamento de banco, callbacks
-simulados nos testes de componentes e limites da medição de cobertura.
+1. Cadastro, pesquisa, edição de cliente e registro de interação (Felipe).
+2. Rejeição de e-mail já cadastrado pela API (Ana Júlia).
+3. Criação de oportunidade, mudança para Ganho e persistência na visão do cliente (Alexandre).
+4. Mudança para Perdido, filtros, totais e isolamento entre dois clientes (Leonardo).
 
-## Verificação local em 22/11/2026
+No relatório Node, `tests` indica a quantidade de casos, `pass` os aprovados,
+`fail` as falhas e `duration_ms` o tempo total em milissegundos.
+No pytest, a confirmação é `5 passed`; o relatório de cobertura aparece acima.
+Na máquina de verificação, os quatro E2E levaram aproximadamente 11 segundos.
 
-- Suíte de unidade/integração do frontend: 26 casos passaram, incluindo os dois novos.
-- E2E existente de clientes/interações: passou. Novo E2E US05–US08: passou
-  após corrigir um seletor ambíguo no próprio teste.
-- Build de produção: passou.
-- Cobertura reportada dos cinco arquivos JS listados: 97,70% de linhas,
-  85,19% de ramificações e 92% de funções, com as limitações descritas acima.
-- Chromium instalado pelo Playwright; backend executado com o Python do ambiente
-  virtual já disponível no computador e seus módulos FastAPI/SQLAlchemy/Uvicorn.
-- Nenhuma alteração no código funcional da aplicação.
+## Cobertura: escopo dos relatórios
+
+- Backend (`pytest --cov=app`): 202 de 251 instruções cobertas, aproximadamente
+  80,48%. O terminal, com a precisão padrão, mostra 80%. Inclui os módulos de
+  `app`, inclusive `main.py`, que apareceu com 0% nesta execução.
+- Frontend (`pnpm run test:coverage`): 97,87% de linhas, 85,81% de ramificações
+  e 95% de funções nos seis arquivos JS de domínio/serviços listados no relatório.
+  Testes e auxiliares não entram na contagem. Os componentes JSX carregados pelo
+  Vite não são contabilizados, embora sejam exercitados pelos testes.
+
+São medições de escopos diferentes, não uma porcentagem única do sistema.
+Não se deve apresentar o percentual do frontend como cobertura de todo o frontend.
+Os E2E verificam o fluxo integrado, mas não entram nesses relatórios de cobertura.
+
+## Explicação dos testes na apresentação
+
+O teste US05 verifica o contrato de envio do formulário e a validação dos campos.
+O teste US06 verifica o ID e a etapa solicitados, além do bloqueio durante o salvamento.
+As funções externas são simuladas nesses dois casos. O E2E complementa essas
+verificações usando API e banco reais, consultando o estado persistido e verificando
+os dados pela interface após recarregar. Recarregar a página não equivale a reiniciar
+os servidores. O cenário verifica comportamentos definidos, não ausência de todos os bugs.
